@@ -1,0 +1,61 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.4.2'  // (or 3.x)
+    id 'io.spring.dependency-management' version '1.1.0'
+}
+
+group = 'org.example'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation platform('org.junit:junit-bom:5.10.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+
+    implementation 'jakarta.ws.rs:jakarta.ws.rs-api:4.0.0'
+    // We do not need to specify spring boot dependency versions as these are being versioned by
+    // the org.springframework.boot and io.spring.dependency-management plugins declared above.
+    implementation 'org.springframework.boot:spring-boot-starter-cache'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter'
+    implementation 'com.h2database:h2:2.1.214' // H2 database for testing
+
+//    implementation 'org.springframework.boot:spring-boot-starter-web'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    implementation 'org.springframework.boot:spring-boot-starter-log4j2'
+    modules {
+        module("org.springframework.boot:spring-boot-starter-logging") {
+            replacedBy("org.springframework.boot:spring-boot-starter-log4j2", "Use Log4j2 instead of Logback")
+        }
+    }
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa:3.3.0'
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
+//    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.glassfish.jersey.core:jersey-client:3.0.8'
+    implementation 'org.glassfish.jersey.core:jersey-server:3.0.8'
+    implementation 'org.glassfish.jersey.core:jersey-common:3.1.6'
+
+    // Lombok (compile-time only, with annotation processor)
+    implementation 'org.liquibase:liquibase-core'
+    implementation 'com.github.blagerweij:liquibase-sessionlock:1.6.9'
+
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
+// Optional: if you also want Lombok in tests
+    testCompileOnly 'org.projectlombok:lombok'
+    testAnnotationProcessor 'org.projectlombok:lombok'
+
+    testImplementation 'org.springframework.cloud:spring-cloud-stream-test-support'
+    testImplementation 'org.springframework.kafka:spring-kafka-test'
+    testImplementation 'org.apache.kafka:kafka-streams-test-utils'
+    testImplementation 'junit:junit'
+
+}
+
+test {
+    useJUnitPlatform()
+}

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd"
+                   logicalFilePath="db.changelog-2023-02-08_02-59-11_247159.xml">
+
+    <changeSet id="2023-03-08_02-59-11_247159.1" author="mushtaqu">
+        <sql>
+
+--             CREATE SEQUENCE item_id_seq START WITH 50 INCREMENT BY 50;
+--             CREATE SEQUENCE shop_id_seq START WITH 50 INCREMENT BY 50;
+--             CREATE SEQUENCE shop_order_id_seq START WITH 50 INCREMENT BY 50;
+--             CREATE SEQUENCE shop_user_id_seq START WITH 50 INCREMENT BY 50;
+--
+--             CREATE SEQUENCE SHOP_USER_SEQ START WITH 50 INCREMENT BY 50;
+--
+--             CREATE TABLE shop_user
+--             (
+-- --                 id BIGINT NOT NULL PRIMARY KEY DEFAULT NEXTVAL('shop_user_id_seq'),
+--                 id BIGINT AUTO_INCREMENT PRIMARY KEY,
+--                 email_id TEXT NOT NULL UNIQUE,
+--                 name TEXT NOT NULL,
+--                 mobile_number TEXT NOT NULL UNIQUE,
+--                 password TEXT NOT NULL
+-- --                 is_admin BOOLEAN NOT NULL DEFAULT false
+--             );
+
+
+
+            INSERT INTO shop_owner(id, email_id, name, mobile_number, password) VALUES
+            (1, 'rakesh@gmail.com', 'Rakesh', '1234567890', 'password1'),
+            (2, 'ritik@gmail.com', 'Ritik', '2345678901', 'password2'),
+            (3, 'aaditya@gmail.com', 'Aaditya', '3456789012', 'password3');
+
+
+--             create table shop(
+-- --                                  id BIGINT NOT NULL PRIMARY KEY DEFAULT NEXTVAL('shop_id_seq'),
+--                                  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+--                                  name TEXT NOT NULL ,
+--                                  address TEXT NOT NULL ,
+--                                  owner_id BIGINT NOT NULL REFERENCES shop_user(id)
+--             );
+
+            INSERT INTO shop(id, name, address, owner_id) VALUES
+            (1, 'Rakesh Shop', '123 Main St, City A', 1),
+            (2, 'Ritik Shop', '456 Oak St, City B', 2),
+            (3, 'Aaditya Shop', '789 Pine St, City C', 3);
+
+--             create table item
+--             (
+-- --                 id   BIGINT NOT NULL PRIMARY KEY DEFAULT NEXTVAL('item_id_seq'),
+--                 id BIGINT AUTO_INCREMENT PRIMARY KEY,
+--                 name TEXT   NOT NULL,
+--                 description TEXT,
+--                 quantity BIGINT NOT NULL,
+--                 price DOUBLE PRECISION NOT NULL ,
+--                 shop_id BIGINT NOT NULL REFERENCES shop(id)
+--             );
+
+            INSERT INTO item(name, description, quantity, price, shop_id, image_url) VALUES
+            ('Item1', 'Cake', 100, 10.5, 1, '/Users/mushtaqu/Desktop/DevelopmentPractice/TicTacToe/ShopManagement/src/main/resources/images/cake.jpeg'),
+            ('Item2', 'Description for Item2', 200, 20.0, 1, '/Users/mushtaqu/Desktop/DevelopmentPractice/TicTacToe/ShopManagement/src/main/resources/images/Lifebuoy.jpg'),
+            ('Item3', 'Description for Item3', 150, 15.75, 2, '/Users/mushtaqu/Desktop/DevelopmentPractice/TicTacToe/ShopManagement/src/main/resources/images/wheel.jpg'),
+            ('Item4', 'Description for Item4', 300, 30.0, 2, '/Users/mushtaqu/Desktop/DevelopmentPractice/TicTacToe/ShopManagement/src/main/resources/images/coke.jpg'),
+            ('Item5', 'Description for Item5', 250, 25.5, 3, '/Users/mushtaqu/Desktop/DevelopmentPractice/TicTacToe/ShopManagement/src/main/resources/images/handwash.jpg');
+
+--             create table shop_order(
+-- --                 id BIGINT NOT NULL PRIMARY KEY DEFAULT NEXTVAL('shop_order_id_seq') ,
+--                     id BIGINT AUTO_INCREMENT PRIMARY KEY,
+--                     shop_id BIGINT NOT NULL REFERENCES shop(id),
+--                     user_id BIGINT NOT NULL REFERENCES shop_user(id),
+--                     item_pojo TEXT NOT NULL,
+--                     timestamp TIMESTAMP NOT NULL
+--             );
+
+        </sql>
+    </changeSet>
+</databaseChangeLog>
