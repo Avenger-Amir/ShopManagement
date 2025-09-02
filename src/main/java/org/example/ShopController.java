@@ -164,7 +164,7 @@ public ResponseEntity<List<WsItem>> addItems(
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
-    userValidator.validateIsAdmin(user);
+    userValidator.validateIsShopOwner(user, wsItems.get(0).getShopId());
 
     final Shop shop = shopRepository.findByOwner_Id(user.getId());
 
@@ -175,7 +175,7 @@ public ResponseEntity<List<WsItem>> addItems(
         for (int i = 0; i < images.size(); i++) {
             MultipartFile file = images.get(i);
             if (!file.isEmpty()) {
-                String uploadDir = "uploads/";
+                String uploadDir = "resources/images/";
                 Files.createDirectories(Paths.get(uploadDir));
 
                 String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
@@ -183,7 +183,7 @@ public ResponseEntity<List<WsItem>> addItems(
                 Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 
                 // Attach image path to the item (assuming WsItem has setImageUrl)
-                wsItems.get(i).setImageUrl("/uploads/" + fileName);
+                wsItems.get(i).setImageUrl("/resources/images/" + fileName);
             }
         }
     }
@@ -200,7 +200,7 @@ public ResponseEntity<List<WsItem>> addItems(
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        userValidator.validateIsAdmin(user);
+        userValidator.validateIsShopOwner(user, wsItems.get(0).getShopId());
         itemValidator.validateAllItemExisting(wsItems);
 
         final Shop shop = shopRepository.findByOwner_Id(user.getId());
@@ -220,7 +220,7 @@ public ResponseEntity<List<WsItem>> addItems(
         }
 
 
-        userValidator.validateIsAdmin(user);
+        userValidator.validateIsShopOwner(user, wsItem.getShopId());
         itemValidator.validateAllItemExisting(List.of(wsItem));
 
         final Shop shop = shopRepository.findByOwner_Id(user.getId());

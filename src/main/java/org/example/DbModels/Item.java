@@ -39,4 +39,7 @@ public class Item {
     @OneToOne
     @JoinColumn(name="shop_id", nullable = false)
     private Shop shop;
+
+    @Column(name="image_url")
+    private String imageUrl;
 }

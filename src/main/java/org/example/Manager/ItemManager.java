@@ -89,6 +89,8 @@ public class ItemManager {
             wsItem.setPrice(item.getPrice());
             wsItem.setQuantity(item.getQuantity());
             wsItem.setDescription(item.getDescription());
+            wsItem.setImageUrl(item.getImageUrl());
+            wsItem.setShopId(item.getShop().getId());
             wsItems.add(wsItem);
         });
         return wsItems;

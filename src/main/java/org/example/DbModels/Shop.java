@@ -27,12 +27,12 @@ public class Shop {
     @Column(name="name", nullable = false)
     private String name;
 
-//    @OneToOne
-//    @JoinColumn(name = "owner_id", nullable = false)
-//    private ShopUser owner;
+    @OneToOne
+    @JoinColumn(name = "owner_id", nullable = false)
+    private ShopUser owner;
 
-    @Column(name = "owner_id", nullable = false)
-    private Long ownerId;
+//    @Column(name = "owner_id", nullable = false)
+//    private Long ownerId;
 
     @Column(name="address", nullable = false)
     private String address;

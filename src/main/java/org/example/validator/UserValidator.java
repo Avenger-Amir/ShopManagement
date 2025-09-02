@@ -1,8 +1,10 @@
 package org.example.validator;
 
 import org.example.DbModels.Shop;
+import org.example.DbModels.ShopOrder;
 import org.example.DbModels.ShopUser;
 import org.example.Manager.UserManager;
+import org.example.Repository.ShopRepository;
 import org.example.WsModels.WsUser;
 import org.example.exceptions.ExceptionUtil;
 import org.springframework.stereotype.Component;
@@ -11,9 +13,12 @@ import org.springframework.stereotype.Component;
 public class UserValidator {
 
     private final UserManager userManager;
+    private final ShopRepository shopRepository;
 
-    UserValidator(UserManager userManager) {
+    UserValidator(final UserManager userManager,
+                  final ShopRepository shopRepository) {
         this.userManager = userManager;
+        this.shopRepository = shopRepository;
     }
 
     public void validateUser(final WsUser wsUser) {
@@ -51,7 +56,20 @@ public class UserValidator {
         return true;
     }
 
-    public void validateIsAdmin(final ShopUser user){
+    public void validateIsShopOwner(final ShopUser user, final Long shopId){
+        if(shopId == null){
+            throw ExceptionUtil.error("Shop Id is null", "400");
+        }
+
+        final Shop shop = shopRepository.findById(shopId).orElse(null);
+        if(shop == null){
+            throw ExceptionUtil.error("Shop with id " + shopId + " does not exist", "400");
+        }
+
+        if(!shop.getOwner().getId().equals(user.getId())){
+            throw ExceptionUtil.error("User is not owner of the shop", "403");
+        }
+
 //        if(!user.isAdmin()){
 //            throw new RuntimeException("User is not admin");
 //        }

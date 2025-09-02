@@ -27,16 +27,16 @@
 --                 is_admin BOOLEAN NOT NULL DEFAULT false
             );
 
-            CREATE TABLE shop_owner
-            (
---                 id BIGINT NOT NULL PRIMARY KEY DEFAULT NEXTVAL('shop_user_id_seq'),
-                id BIGINT AUTO_INCREMENT PRIMARY KEY,
-                email_id TEXT NOT NULL UNIQUE,
-                name TEXT NOT NULL,
-                mobile_number TEXT NOT NULL UNIQUE,
-                password TEXT NOT NULL
---                 is_admin BOOLEAN NOT NULL DEFAULT false
-            );
+--             CREATE TABLE shop_owner
+--             (
+-- --                 id BIGINT NOT NULL PRIMARY KEY DEFAULT NEXTVAL('shop_user_id_seq'),
+--                 id BIGINT AUTO_INCREMENT PRIMARY KEY,
+--                 email_id TEXT NOT NULL UNIQUE,
+--                 name TEXT NOT NULL,
+--                 mobile_number TEXT NOT NULL UNIQUE,
+--                 password TEXT NOT NULL
+-- --                 is_admin BOOLEAN NOT NULL DEFAULT false
+--             );
 
 
             create table shop(
@@ -44,7 +44,7 @@
                                  id BIGINT AUTO_INCREMENT PRIMARY KEY,
                                  name TEXT NOT NULL ,
                                  address TEXT NOT NULL ,
-                                 owner_id BIGINT NOT NULL REFERENCES shop_owner(id)
+                                 owner_id BIGINT NOT NULL REFERENCES shop_user(id)
             );
 
             create table item
