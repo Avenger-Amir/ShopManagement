@@ -40,18 +40,20 @@ public class OrderManager {
             final List<ItemPojo> itemPojoList = new ArrayList<>();
             wsShopOrder.getWsShopOrderList().forEach(order -> {
                 final Item item = itemMap.get(order.getItemId());
-                final Long bookedQuantity = Math.min(order.getQuantity(), item.getQuantity());
-                item.setQuantity(item.getQuantity()-bookedQuantity);
+
+                //Note(mushtaqu): Skip quantity check
+//                final Long bookedQuantity = Math.min(order.getQuantity(), item.getQuantity());
+//                item.setQuantity(item.getQuantity()-bookedQuantity);
 
                 final WsShopOrderList wsShopOrderList = new WsShopOrderList();
-                wsShopOrderList.setName(order.getName());
-                wsShopOrderList.setPrice(order.getPrice());
-                wsShopOrderList.setQuantity(bookedQuantity);
+                wsShopOrderList.setName(item.getName());
+                wsShopOrderList.setPrice(item.getPrice());
+                wsShopOrderList.setQuantity(order.getQuantity());
                 wsShopOrderList.setItemId(order.getItemId());
 
 
                 bookedWsOrder.getWsShopOrderList().add(wsShopOrderList);
-                totalPrice.updateAndGet(v -> v + bookedQuantity * item.getPrice());
+                totalPrice.updateAndGet(v -> v + order.getQuantity() * item.getPrice());
                 final ItemPojo itemPojo = new ItemPojo();
                 itemPojo.setItemName(item.getName());
                 itemPojo.setItemQuantity(item.getQuantity());

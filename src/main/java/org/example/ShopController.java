@@ -3,12 +3,10 @@ package org.example;
 import org.example.DbModels.Item;
 import org.example.DbModels.Shop;
 import org.example.DbModels.ShopUser;
-import org.example.Manager.ItemManager;
-import org.example.Manager.OrderManager;
-import org.example.Manager.SessionManager;
-import org.example.Manager.UserManager;
+import org.example.Manager.*;
 import org.example.Repository.ShopRepository;
 import org.example.WsModels.WsItem;
+import org.example.WsModels.WsShop;
 import org.example.WsModels.WsShopOrder;
 import org.example.WsModels.WsUser;
 import org.example.validator.ItemValidator;
@@ -39,13 +37,15 @@ public class ShopController {
     private final ItemManager itemManager;
     private final ItemValidator itemValidator;
     private final ShopRepository shopRepository;
+    private final ShopManager shopManager;
     ShopController(final UserValidator userValidator,
                    final UserManager userManager,
                    final OrderManager orderManager,
                    final OrderValidator orderValidator,
                    final ItemManager itemManager,
                    final ItemValidator itemValidator,
-                   final ShopRepository shopRepository) {
+                   final ShopRepository shopRepository,
+                   final ShopManager shopManager) {
         this.userValidator = userValidator;
         this.userManager = userManager;
         this.orderManager = orderManager;
@@ -53,6 +53,7 @@ public class ShopController {
         this.itemManager = itemManager;
         this.itemValidator = itemValidator;
         this.shopRepository = shopRepository;
+        this.shopManager = shopManager;
     }
 
     @PostMapping("/signUp")
@@ -89,8 +90,28 @@ public class ShopController {
                 .body(wsUser);
     }
 
+    @GetMapping("/shop/")
+    public ResponseEntity<List<WsShop>> getShop(){
+//        orderValidator.validateItems(wsShopOrder);
+//        final List<Item> items = orderManager.shopOrderToItems(shopOrders);
+        // fetch user from session
+//        ShopUser user = SessionManager.validateSession(sessionId);
+//        if (user == null) {
+//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+//        }
+
+//        final WsShopOrder bookedOrder = orderManager.bookOrder(wsShopOrder, user);
+//        final List<WsShopOrder> wsBookedItems = bookedItems.forEach(item -> {
+//            return orderManager.itemToShopOrder(item);
+//        });
+
+        final List<WsShop> wsShops = shopManager.toWsShops(shopManager.getAllShops());
+        return ResponseEntity.ok(wsShops);
+//        return ResponseEntity.ok(bookedOrder);
+    }
+
     @PostMapping("/shop/orderBookingPreview")
-    public ResponseEntity<WsShopOrder> orderBookingPreview(@RequestHeader("x-session-id") String sessionId, @RequestBody final WsShopOrder wsShopOrder){
+    public ResponseEntity<WsShopOrder> orderBookingPreview(@RequestBody final WsShopOrder wsShopOrder){
         orderValidator.validateItems(wsShopOrder);
         final WsShopOrder previewedWsShopOrder = orderManager.previewShopOrder(wsShopOrder);
         return ResponseEntity.ok(previewedWsShopOrder);
@@ -152,7 +173,7 @@ public class ShopController {
 //        return ResponseEntity.ok(itemManager.addItem(wsItems));
 //    }
 
-@PostMapping(value = "/shop/items/add", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+@PostMapping(value = "/shop/owner/items/add", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 public ResponseEntity<List<WsItem>> addItems(
         @RequestHeader("x-session-id") String sessionId,
         @RequestPart("items") final List<WsItem> wsItems,
@@ -191,7 +212,7 @@ public ResponseEntity<List<WsItem>> addItems(
     return ResponseEntity.ok(itemManager.addItem(wsItems));
 }
 
-    @PostMapping("/shop/itemList/remove")
+    @PostMapping("/shop/items/remove")
     public ResponseEntity<List<WsItem>> removeItems(@RequestHeader("x-session-id") String sessionId,
                                                             @RequestBody final List<WsItem> wsItems){
         // fetch user from session
@@ -210,7 +231,7 @@ public ResponseEntity<List<WsItem>> addItems(
         return ResponseEntity.ok(itemManager.removeItems(wsItems));
     }
 
-    @PostMapping("/shop/item/changePrice")
+    @PostMapping("/shop/items/changePrice")
     public ResponseEntity<WsItem> changePrice(@RequestHeader("x-session-id") String sessionId, @RequestBody final WsItem wsItem){
 
         // fetch user from session

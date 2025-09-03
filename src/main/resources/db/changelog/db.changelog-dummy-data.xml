@@ -57,12 +57,12 @@
 --                 shop_id BIGINT NOT NULL REFERENCES shop(id)
 --             );
 
-            INSERT INTO item(name, description, quantity, price, shop_id, image_url) VALUES
-            ('Item1', 'Cake', 100, 10.5, 1, 'images/cake.jpeg'),
-            ('Item2', 'Description for Item2', 200, 20.0, 1, 'images/Lifebuoy.jpg'),
-            ('Item3', 'Description for Item3', 150, 15.75, 2, 'images/wheel.jpg'),
-            ('Item4', 'Description for Item4', 300, 30.0, 2, 'images/coke.jpg'),
-            ('Item5', 'Description for Item5', 250, 25.5, 3, 'images/handwash.jpg');
+            INSERT INTO item(id, name, description, quantity, price, shop_id, image_url) VALUES
+            (1, 'Item1', 'Cake', 100, 10.5, 1, 'images/cake.jpeg'),
+            (2, 'Item2', 'Description for Item2', 200, 20.0, 1, 'images/Lifebuoy.jpg'),
+            (3, 'Item3', 'Description for Item3', 150, 15.75, 2, 'images/wheel.jpg'),
+            (4, 'Item4', 'Description for Item4', 300, 30.0, 2, 'images/coke.jpg'),
+            (5, 'Item5', 'Description for Item5', 250, 25.5, 3, 'images/handwash.jpg');
 
 --             create table shop_order(
 -- --                 id BIGINT NOT NULL PRIMARY KEY DEFAULT NEXTVAL('shop_order_id_seq') ,

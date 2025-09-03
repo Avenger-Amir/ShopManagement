@@ -8,10 +8,7 @@ import org.example.Repository.ShopRepository;
 import org.example.WsModels.WsItem;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
@@ -34,7 +31,7 @@ public class ItemManager {
         });
 //        final Set<Long> requestedItemIds = Set.of(itemIds);
         final Set<Long> existingItemIds = existingItems.stream().map(Item::getId).collect(Collectors.toSet());
-        if (!existingItemIds.containsAll(Set.of(requestedItemIds))) {
+        if (!existingItemIds.containsAll(new HashSet<>(requestedItemIds))) {
             throw new BadRequestException("All items are not present in the shop");
         }
 
@@ -85,6 +82,7 @@ public class ItemManager {
         final List<WsItem> wsItems = new ArrayList<>();
         items.forEach(item -> {
             final WsItem wsItem = new WsItem();
+            wsItem.setId(item.getId());
             wsItem.setName(item.getName());
             wsItem.setPrice(item.getPrice());
             wsItem.setQuantity(item.getQuantity());
