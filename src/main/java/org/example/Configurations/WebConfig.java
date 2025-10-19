@@ -8,11 +8,11 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
-    @Override
-    public void addResourceHandlers(final ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/Users/mushtaqu/Desktop/DevelopmentPractice/TicTacToe/resources/static/images/**")
-                .addResourceLocations("file:/Users/mushtaqu/Desktop/DevelopmentPractice/TicTacToe/resources/static/images/");
-    }
+//    @Override
+//    public void addResourceHandlers(final ResourceHandlerRegistry registry) {
+//        registry.addResourceHandler("/Users/mushtaqu/Desktop/DevelopmentPractice/TicTacToe/resources/static/images/**")
+//                .addResourceLocations("file:/Users/mushtaqu/Desktop/DevelopmentPractice/TicTacToe/resources/static/images/");
+//    }
 
     @Bean
     public WebMvcConfigurer corsConfigurer() {

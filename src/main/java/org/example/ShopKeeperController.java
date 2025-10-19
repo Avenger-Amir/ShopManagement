@@ -56,7 +56,7 @@ public class ShopKeeperController {
                 .body(wsShopKeeperLogin);
     }
 
-    @PostMapping("/mostSold")
+    @PostMapping("/most_sold")
     public ResponseEntity<List<WsShopOrderList>> mostSold(@RequestHeader("x-session-id") final String sessionId, @RequestBody final WsTimeStampBound wsTimeStampBound) {
         final Shopkeeper shopkeeper = SessionManager.validateShopKeeperSession(sessionId);
         if (shopkeeper == null) {
@@ -65,7 +65,7 @@ public class ShopKeeperController {
         return ResponseEntity.ok(orderManager.getMostSoldItems(shopkeeper.getId(), wsTimeStampBound.getStartTime(), wsTimeStampBound.getEndTime()));
     }
 
-    @PostMapping("/signUp")
+    @PostMapping("/sign_up")
     public ResponseEntity<WsShopkeeperSignUp> signUp(@RequestBody final WsShopkeeperSignUp wsShopkeeper){
 //        userValidator.validateUser(wsUser);
         if(shopkeeperValidator.isExistingShopkeeperByMobileNumber(wsShopkeeper.getMobileNumber())){
@@ -76,8 +76,8 @@ public class ShopKeeperController {
         final Shopkeeper shopkeeper = shopKeeperManager.save(toShopkeeper(wsShopkeeper));
         final Address address =  addressManager.toAddress(wsShopkeeper.getAddress(), AddressableType.SHOPKEEPER, shopkeeper.getId());
         shopkeeper.getAddresses().add(address);
-        shopKeeperManager.save(shopkeeper);
-        addressManager.save(address);
+//        shopKeeperManager.save(shopkeeper);
+//        addressManager.save(address);
         final String sessionId = SessionManager.createShopKeeperSession(shopkeeper);
 
         return ResponseEntity.ok()

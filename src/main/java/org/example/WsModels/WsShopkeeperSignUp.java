@@ -27,7 +27,7 @@ public class WsShopkeeperSignUp {
     @NonNull
     private String mobileNumber;
 
-    @JsonProperty("user_address")
+    @JsonProperty("address")
     @NonNull
     private WsAddress address;
 

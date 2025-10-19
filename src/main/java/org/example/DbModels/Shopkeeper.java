@@ -40,7 +40,7 @@ public class Shopkeeper {
     @Column(name="password", nullable = false)
     private String password;
 
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(
             name = "addressable_id", // This is the column in the 'address' table
             referencedColumnName = "id" // This is the PK column in this 'shopkeeper' table
