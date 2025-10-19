@@ -49,7 +49,7 @@ public class ShopOrder {
     @OneToMany(
             cascade = CascadeType.ALL,
             orphanRemoval = true,
-            mappedBy = "orderedItem",
+            mappedBy = "id",
             fetch = FetchType.LAZY,
             targetEntity = OrderedItem.class)
     private List<OrderedItem> orderedItems = new ArrayList<>();

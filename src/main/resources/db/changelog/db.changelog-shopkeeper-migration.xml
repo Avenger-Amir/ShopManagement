@@ -19,7 +19,7 @@
 --             CREATE SEQUENCE SHOP_ORDER_SEQ START WITH 50 INCREMENT BY 50;
             CREATE SEQUENCE ITEM_SEQ START WITH 50 INCREMENT BY 50;
 
-            CREATE TABLE shop_owner
+            CREATE TABLE shopkeeper
             (
 --                 id BIGINT NOT NULL PRIMARY KEY DEFAULT NEXTVAL('shop_user_id_seq'),
                 id BIGINT AUTO_INCREMENT PRIMARY KEY,
@@ -36,7 +36,7 @@
                                  id BIGINT AUTO_INCREMENT PRIMARY KEY,
                                  name TEXT NOT NULL ,
                                  address TEXT NOT NULL ,
-                                 owner_id BIGINT NOT NULL REFERENCES shop_owner(id)
+                                 owner_id BIGINT NOT NULL REFERENCES shopkeeper(id)
             );
 
             create table item

@@ -2,6 +2,7 @@ package org.example.Manager;
 
 import org.example.DbModels.*;
 import org.example.Repository.ItemRepository;
+import org.example.Repository.OrderedItemRepository;
 import org.example.Repository.ShopOrderRepository;
 import org.example.Repository.ShopRepository;
 import org.example.WsModels.WsShopOrder;
@@ -23,13 +24,16 @@ public class OrderManager {
     private final ItemRepository itemRepository;
     private final ShopRepository shopRepository;
     private final ShopOrderRepository shopOrderRepository;
+    private final OrderedItemRepository orderedItemRepository;
 
     OrderManager(final ItemRepository itemRepository,
                  final ShopRepository shopRepository,
-                 final ShopOrderRepository shopOrderRepository) {
+                 final ShopOrderRepository shopOrderRepository,
+                 final OrderedItemRepository orderedItemRepository) {
         this.itemRepository = itemRepository;
         this.shopRepository = shopRepository;
         this.shopOrderRepository = shopOrderRepository;
+        this.orderedItemRepository = orderedItemRepository;
     }
 
     synchronized public WsShopOrder bookOrder(final WsShopOrder wsShopOrder, final ShopUser user) {
@@ -38,7 +42,8 @@ public class OrderManager {
             final WsShopOrder bookedWsOrder = new WsShopOrder();
             bookedWsOrder.setShopId(wsShopOrder.getShopId());
             AtomicReference<Double> totalPrice= new AtomicReference<>((double) 0);
-            final List<ItemPojo> itemPojoList = new ArrayList<>();
+//            final List<ItemPojo> itemPojoList = new ArrayList<>();
+            final List<OrderedItem> orderedItemList = new ArrayList<>();
             wsShopOrder.getWsShopOrderList().forEach(order -> {
                 final Item item = itemMap.get(order.getItemId());
 
@@ -55,20 +60,29 @@ public class OrderManager {
 
                 bookedWsOrder.getWsShopOrderList().add(wsShopOrderList);
                 totalPrice.updateAndGet(v -> v + order.getQuantity() * item.getPrice());
-                final ItemPojo itemPojo = new ItemPojo();
-                itemPojo.setItemName(item.getName());
-                itemPojo.setItemQuantity(item.getQuantity());
-                itemPojo.setItemPrice(item.getPrice());
-                itemPojoList.add(itemPojo);
+                final OrderedItem orderedItem = new OrderedItem();
+                orderedItem.setItem(item);
+                orderedItem.setQuantity(order.getQuantity());
+                orderedItem.setPrice(item.getPrice());
+                orderedItemList.add(orderedItem);
+//                final ItemPojo itemPojo = new ItemPojo();
+//                itemPojo.setItemName(item.getName());
+//                itemPojo.setItemQuantity(item.getQuantity());
+//                itemPojo.setItemPrice(item.getPrice());
+//                itemPojoList.add(itemPojo);
             });
 
             final ShopOrder shopOrder = new ShopOrder();
             shopOrder.setShop(shopRepository.getReferenceById(wsShopOrder.getShopId()));
-            shopOrder.setTimestamp(Timestamp.from(Instant.now()));
+            shopOrder.setTimestamp(Instant.now());
             shopOrder.setUser(user);
-            shopOrder.setItemPojoList(itemPojoList.toString());
+            shopOrder.setOrderedItems(orderedItemList);
             shopOrder.setStatus(wsShopOrder.getStatus());
-            shopOrderRepository.saveAndFlush(shopOrder);
+            final ShopOrder savedShopOrder = shopOrderRepository.saveAndFlush(shopOrder);
+            orderedItemList.forEach(orderedItem -> {
+                orderedItem.setShopOrder(savedShopOrder);
+                orderedItemRepository.save(orderedItem);
+            });
 
             final WsShopOrder bookedWsShopOrder = new WsShopOrder();
             bookedWsShopOrder.setShopId(wsShopOrder.getShopId());

@@ -14,5 +14,5 @@ public class WsShopKeeperLogin {
 
     @JsonProperty("mobile_number")
     @NonNull
-    private String number;
+    private String mobileNumber;
 }

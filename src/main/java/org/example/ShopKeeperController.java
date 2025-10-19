@@ -41,10 +41,10 @@ public class ShopKeeperController {
 
     @PostMapping("/login")
     public ResponseEntity<WsShopKeeperLogin> shopLogin(@RequestBody final WsShopKeeperLogin wsShopKeeperLogin) {
-        if(!shopkeeperValidator.isExistingShopkeeperByMobileNumber(wsShopKeeperLogin.getNumber())){
+        if(!shopkeeperValidator.isExistingShopkeeperByMobileNumber(wsShopKeeperLogin.getMobileNumber())){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
-        final Shopkeeper shopKeeper = shopKeeperManager.getByMobileNumberAndPassword(wsShopKeeperLogin.getNumber(), wsShopKeeperLogin.getPassword());
+        final Shopkeeper shopKeeper = shopKeeperManager.getByMobileNumberAndPassword(wsShopKeeperLogin.getMobileNumber(), wsShopKeeperLogin.getPassword());
         if (shopKeeper == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }

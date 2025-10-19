@@ -23,8 +23,7 @@ public class WsShopRegistration {
     private WsAddress address;
 
     @JsonProperty("shop_keeper_id")
-    @NonNull
-    private int shop_keeper_id;
+    private long shop_keeper_id;
 
     @Enumerated(jakarta.persistence.EnumType.STRING)
     @JsonProperty("shop_type")

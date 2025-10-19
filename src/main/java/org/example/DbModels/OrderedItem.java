@@ -22,7 +22,7 @@ public class OrderedItem {
     private ShopOrder shopOrder;
 
     @Column(name="quantity", nullable = false)
-    private Long quantity;
+    private long quantity;
 
     @Column(name="price", nullable = false)
     private double price;

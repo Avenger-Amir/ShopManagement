@@ -3,7 +3,9 @@ package org.example.DbModels;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.Where;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Table(name = "shop_user")
@@ -39,12 +41,11 @@ public class ShopUser {
     private String password;
 
     @OneToMany
-    @JoinColumns({
-            @JoinColumn(name="addressable_id", referencedColumnName="shop_user_id"),
-            @JoinColumn(name="addressable_type", referencedColumnName="'shop_user'")
-    })
-    private List<Address> addresses;
-
-//    @Column(name="is_admin")
-//    private boolean isAdmin;
+    @JoinColumn(
+            name = "addressable_id", // This is the column in the 'address' table
+            referencedColumnName = "id" // This is the PK column in this 'shopkeeper' table
+    )
+    // Add this @Where clause to filter for the correct type
+    @Where(clause = "addressable_type = 'USER'") // Use the ENUM string value
+    private List<Address> addresses = new ArrayList<>();
 }
