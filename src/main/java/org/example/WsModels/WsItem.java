@@ -1,6 +1,7 @@
 package org.example.WsModels;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.annotation.Nullable;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -26,6 +27,6 @@ public class WsItem {
     @JsonProperty("shop_id")
     private Long shopId;
 
-    @JsonProperty("image_url")
+    @JsonProperty(value="image_url", required = false)
     private String imageUrl;
 }

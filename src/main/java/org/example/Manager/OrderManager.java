@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
@@ -66,10 +67,12 @@ public class OrderManager {
             shopOrder.setTimestamp(Timestamp.from(Instant.now()));
             shopOrder.setUser(user);
             shopOrder.setItemPojoList(itemPojoList.toString());
+            shopOrder.setStatus(wsShopOrder.getStatus());
             shopOrderRepository.saveAndFlush(shopOrder);
 
             final WsShopOrder bookedWsShopOrder = new WsShopOrder();
             bookedWsShopOrder.setShopId(wsShopOrder.getShopId());
+            bookedWsShopOrder.setStatus(wsShopOrder.getStatus());
 
             return wsShopOrder;
         }
@@ -99,4 +102,30 @@ public class OrderManager {
         final Map<Long, Item> itemMap = items.stream().collect(Collectors.toMap(Item::getId, item -> item));
         return itemMap;
     }
+
+    public List<WsShopOrderList> getMostSoldItems(final Long shopkeeperId, final Instant startTime, final Instant endTime){
+        final List<ShopOrder> shopOrders = shopOrderRepository.findByShop_IdAndTimestampIsBetween(shopkeeperId, startTime, endTime);
+        return getCombinedOrdersByItemId(shopOrders);
+    }
+
+    private List<WsShopOrderList> getCombinedOrdersByItemId(final List<ShopOrder> shopOrders){
+        final Map<Long, WsShopOrderList> itemIdToOrderMap = new HashMap<>();
+        for (final ShopOrder shopOrder : shopOrders) {
+            final List<OrderedItem> items = shopOrder.getOrderedItems();
+            items.forEach(item -> {
+                if(itemIdToOrderMap.containsKey(item.getItem().getId())){
+                    final WsShopOrderList existingOrder = itemIdToOrderMap.get(item.getItem().getId());
+                    existingOrder.setQuantity(existingOrder.getQuantity() + item.getQuantity());
+                } else {
+                    final WsShopOrderList newOrder = new WsShopOrderList();
+                    newOrder.setItemId(item.getItem().getId());
+                    newOrder.setName(item.getItem().getName());
+                    newOrder.setQuantity(item.getQuantity());
+                    itemIdToOrderMap.put(item.getItem().getId(), newOrder);
+                }
+            });
+        }
+        return itemIdToOrderMap.values().stream().toList();
+    }
+
 }

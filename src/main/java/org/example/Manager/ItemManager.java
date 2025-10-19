@@ -43,6 +43,7 @@ public class ItemManager {
             Item item = itemRepository.findByNameAndShopId(wsItem.getName(), wsItem.getShopId());
             if (item == null) {
                 item = toItem(wsItem);
+//                item.setId((100 + (int)(Math.random() * ((100000 - 100) + 1)))+1L);
                 item = itemRepository.saveAndFlush(item);
                 wsItem.setId(item.getId());
             }else{
@@ -72,9 +73,10 @@ public class ItemManager {
         item.setPrice(wsItem.getPrice());
         item.setDescription(wsItem.getDescription());
         item.setQuantity(wsItem.getQuantity());
-        final Optional<Shop> shop = shopRepository.findById(wsItem.getId());
+        final Optional<Shop> shop = shopRepository.findById(wsItem.getShopId());
         assert shop.isPresent();
         item.setShop(shop.get());
+        item.setImageUrl(wsItem.getImageUrl());
         return item;
     }
 
@@ -113,5 +115,17 @@ public class ItemManager {
         }else{
             return itemRepository.findByNameContainingIgnoreCaseAndShopId(name, shopId);
         }
+    }
+
+    public List<Item> getItemsByShopId(final Long shopId){
+        return itemRepository.findByShopId(shopId);
+    }
+
+    public void removeItem(final Long itemId){
+        itemRepository.deleteById(itemId);
+    }
+
+    public Item getItemById(final Long itemId){
+        return itemRepository.findById(itemId).orElse(null);
     }
 }

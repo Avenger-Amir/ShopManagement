@@ -42,4 +42,8 @@ public class UserManager {
         user.setMobileNumber(wsUser.getNumber());
         return user;
     }
+
+    public ShopUser findById(final Long userId){
+        return userRepository.findById(userId).orElse(null);
+    }
 }

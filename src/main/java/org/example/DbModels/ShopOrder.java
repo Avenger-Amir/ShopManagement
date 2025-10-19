@@ -3,8 +3,12 @@ package org.example.DbModels;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.example.enums.ShopOrderStatus;
 
 import java.sql.Timestamp;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Table(name="shop_order")
@@ -31,13 +35,22 @@ public class ShopOrder {
     @JoinColumn(name="user_id")
     private ShopUser user;
 
-    @Column(name="item_pojo", nullable=false)
-    private String itemPojoList;
-
     @Column(name="timestamp", nullable = false)
-    private Timestamp timestamp;
+    private Instant timestamp;
 
     @OneToOne
     @JoinColumn(name="shop_id", nullable = false)
     private Shop shop;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name="status", nullable = false)
+    private ShopOrderStatus status;
+
+    @OneToMany(
+            cascade = CascadeType.ALL,
+            orphanRemoval = true,
+            mappedBy = "orderedItem",
+            fetch = FetchType.LAZY,
+            targetEntity = OrderedItem.class)
+    private List<OrderedItem> orderedItems = new ArrayList<>();
 }

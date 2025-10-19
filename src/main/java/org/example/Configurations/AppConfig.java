@@ -12,7 +12,7 @@ public class AppConfig {
     public FilterRegistrationBean<SessionFilter> loggingFilter(){
         FilterRegistrationBean<SessionFilter> registrationBean = new FilterRegistrationBean<>();
         registrationBean.setFilter(new SessionFilter());
-        registrationBean.addUrlPatterns("/api/shop/owner/items/*");
+        registrationBean.addUrlPatterns("/api/shop/owner/items/adfdsf/*");
 //        registrationBean.addUrlPatterns("/api/shop/order", "/api/shop/owner/items/*"); // secure APIs under /api/
         return registrationBean;
     }

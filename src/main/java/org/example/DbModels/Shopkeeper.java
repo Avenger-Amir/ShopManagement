@@ -4,13 +4,14 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 
-@Table(name = "shop_user")
+@Table(name="shopkeeper")
 @Entity
-@Setter
 @Getter
-public class ShopUser {
+@Setter
+public class Shopkeeper {
 
     @Id
 //    @SequenceGenerator(
@@ -33,18 +34,17 @@ public class ShopUser {
     private String mobileNumber;
 
     @Column(name="name", nullable = false)
-    private String userName;
+    private String name;
 
     @Column(name="password", nullable = false)
     private String password;
 
     @OneToMany
     @JoinColumns({
-            @JoinColumn(name="addressable_id", referencedColumnName="shop_user_id"),
-            @JoinColumn(name="addressable_type", referencedColumnName="'shop_user'")
+            @JoinColumn(name="addressable_id", referencedColumnName="shopkeeper_id"),
+            @JoinColumn(name="addressable_type", referencedColumnName="'shopkeeper'")
     })
-    private List<Address> addresses;
-
+    private List<Address> addresses = new ArrayList<>();
 //    @Column(name="is_admin")
 //    private boolean isAdmin;
 }

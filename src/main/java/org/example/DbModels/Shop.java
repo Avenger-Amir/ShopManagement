@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @Table(name="shop")
 @Entity
 @Getter
@@ -34,6 +36,10 @@ public class Shop {
 //    @Column(name = "owner_id", nullable = false)
 //    private Long ownerId;
 
-    @Column(name="address", nullable = false)
-    private String address;
+    @OneToMany
+    @JoinColumns({
+            @JoinColumn(name="addressable_id", referencedColumnName="shop_id"),
+            @JoinColumn(name="addressable_type", referencedColumnName="'shop'")
+    })
+    private List<Address> addresses;
 }

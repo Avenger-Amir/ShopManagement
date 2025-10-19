@@ -7,17 +7,17 @@
     <changeSet id="2023-02-08_02-59-11_247159.1" author="mushtaqu">
         <sql>
 
-            CREATE SEQUENCE item_id_seq START WITH 1 INCREMENT BY 50;
-            CREATE SEQUENCE shop_id_seq START WITH 1 INCREMENT BY 50;
+--             CREATE SEQUENCE item_id_seq START WITH 1 INCREMENT BY 50;
+--             CREATE SEQUENCE shop_id_seq START WITH 1 INCREMENT BY 50;
             CREATE SEQUENCE shop_order_id_seq START WITH 1 INCREMENT BY 50;
             CREATE SEQUENCE shop_user_id_seq START WITH 1 INCREMENT BY 50;
-            CREATE SEQUENCE shop_owner_id_seq START WITH 1 INCREMENT BY 50;
+--             CREATE SEQUENCE shop_owner_id_seq START WITH 1 INCREMENT BY 50;
 
 
             CREATE SEQUENCE SHOP_USER_SEQ START WITH 50 INCREMENT BY 50;
-            CREATE SEQUENCE SHOP_OWNER_SEQ START WITH 50 INCREMENT BY 50;
+--             CREATE SEQUENCE SHOP_OWNER_SEQ START WITH 50 INCREMENT BY 50;
             CREATE SEQUENCE SHOP_ORDER_SEQ START WITH 50 INCREMENT BY 50;
-            CREATE SEQUENCE ITEM_SEQ START WITH 50 INCREMENT BY 50;
+--             CREATE SEQUENCE ITEM_SEQ START WITH 50 INCREMENT BY 50;
 
             CREATE TABLE shop_user
             (
@@ -42,25 +42,25 @@
 --             );
 
 
-            create table shop(
---                                  id BIGINT NOT NULL PRIMARY KEY DEFAULT NEXTVAL('shop_id_seq'),
-                                 id BIGINT AUTO_INCREMENT PRIMARY KEY,
-                                 name TEXT NOT NULL ,
-                                 address TEXT NOT NULL ,
-                                 owner_id BIGINT NOT NULL REFERENCES shop_user(id)
-            );
+--             create table shop(
+-- --                                  id BIGINT NOT NULL PRIMARY KEY DEFAULT NEXTVAL('shop_id_seq'),
+--                                  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+--                                  name TEXT NOT NULL ,
+--                                  address TEXT NOT NULL ,
+--                                  owner_id BIGINT NOT NULL REFERENCES shop_user(id)
+--             );
 
-            create table item
-            (
---                 id   BIGINT NOT NULL PRIMARY KEY DEFAULT NEXTVAL('item_id_seq'),
-                id BIGINT AUTO_INCREMENT PRIMARY KEY,
-                name TEXT   NOT NULL,
-                description TEXT,
-                quantity BIGINT NOT NULL,
-                price DOUBLE PRECISION NOT NULL ,
-                shop_id BIGINT NOT NULL REFERENCES shop(id),
-                image_url TEXT NOT NULL
-            );
+--             create table item
+--             (
+-- --                 id   BIGINT NOT NULL PRIMARY KEY DEFAULT NEXTVAL('item_id_seq'),
+--                 id BIGINT AUTO_INCREMENT PRIMARY KEY,
+--                 name TEXT   NOT NULL,
+--                 description TEXT,
+--                 quantity BIGINT NOT NULL,
+--                 price DOUBLE PRECISION NOT NULL ,
+--                 shop_id BIGINT NOT NULL REFERENCES shop(id),
+--                 image_url TEXT NOT NULL
+--             );
 
             create table shop_order(
 --                 id BIGINT NOT NULL PRIMARY KEY DEFAULT NEXTVAL('shop_order_id_seq') , Add not null in shop user

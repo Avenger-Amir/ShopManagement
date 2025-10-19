@@ -10,8 +10,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addResourceHandlers(final ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/resources/images/**")
-                .addResourceLocations("file:resources/images/");
+        registry.addResourceHandler("/Users/mushtaqu/Desktop/DevelopmentPractice/TicTacToe/resources/static/images/**")
+                .addResourceLocations("file:/Users/mushtaqu/Desktop/DevelopmentPractice/TicTacToe/resources/static/images/");
     }
 
     @Bean
@@ -23,13 +23,9 @@ public class WebConfig implements WebMvcConfigurer {
                         .allowedOrigins("http://localhost:5173", "https://yourdomain.com") // dev + prod frontend
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*")
-                        .exposedHeaders("x-session-id")
+                        .exposedHeaders("x-session-id", "Content-Type")
                         .allowCredentials(true);
             }
         };
     }
-
-
-
-
 }

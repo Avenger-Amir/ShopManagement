@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
+import org.example.enums.ShopOrderStatus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +17,11 @@ public class WsShopOrder {
     private int orderId;
 
     @JsonProperty("shop_id")
-    @NonNull private Long ShopId;
+    @NonNull
+    private Long ShopId;
+
+    @JsonProperty("status")
+    private ShopOrderStatus status;
 
     @JsonProperty("shop_order_list")
     private List<WsShopOrderList> wsShopOrderList = new ArrayList<>();
