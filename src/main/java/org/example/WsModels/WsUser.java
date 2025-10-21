@@ -24,11 +24,11 @@ public class WsUser {
     @NonNull
     private String password;
 
-    @JsonProperty("number")
+    @JsonProperty("mobile_number")
     @NonNull
-    private String number;
+    private String mobileNumber;
 
     @JsonProperty("address")
 //    @NonNull
-    private String address;
+    private WsAddress address;
 }

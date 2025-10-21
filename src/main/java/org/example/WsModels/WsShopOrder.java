@@ -14,7 +14,7 @@ import java.util.List;
 public class WsShopOrder {
 
     @JsonProperty("order_id")
-    private int orderId;
+    private Long orderId;
 
     @JsonProperty("shop_id")
     @NonNull

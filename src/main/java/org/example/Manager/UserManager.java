@@ -39,7 +39,7 @@ public class UserManager {
         user.setUserName(wsUser.getUsername());
         user.setPassword(wsUser.getPassword());
         user.setEmailId(wsUser.getEmailId());
-        user.setMobileNumber(wsUser.getNumber());
+        user.setMobileNumber(wsUser.getMobileNumber());
         return user;
     }
 

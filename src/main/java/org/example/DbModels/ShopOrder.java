@@ -35,8 +35,8 @@ public class ShopOrder {
     @JoinColumn(name="user_id")
     private ShopUser user;
 
-    @Column(name="timestamp", nullable = false)
-    private Instant timestamp;
+    @Column(name="instant", nullable = false)
+    private Instant instant;
 
     @OneToOne
     @JoinColumn(name="shop_id", nullable = false)
@@ -49,8 +49,19 @@ public class ShopOrder {
     @OneToMany(
             cascade = CascadeType.ALL,
             orphanRemoval = true,
-            mappedBy = "id",
+            mappedBy = "shopOrder",
             fetch = FetchType.LAZY,
             targetEntity = OrderedItem.class)
     private List<OrderedItem> orderedItems = new ArrayList<>();
+
+    // In ShopOrder.java
+    public void addOrderedItem(OrderedItem item) {
+        orderedItems.add(item);
+        item.setShopOrder(this); // 'this' refers to the current ShopOrder instance
+    }
+
+    public void removeOrderedItem(OrderedItem item) {
+        orderedItems.remove(item);
+        item.setShopOrder(null);
+    }
 }

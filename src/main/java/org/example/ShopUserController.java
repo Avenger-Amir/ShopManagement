@@ -3,6 +3,7 @@ package org.example;
 import org.example.DbModels.Item;
 import org.example.DbModels.Shop;
 import org.example.DbModels.ShopUser;
+import org.example.DbModels.Shopkeeper;
 import org.example.Manager.*;
 import org.example.Repository.ShopRepository;
 import org.example.WsModels.WsItem;
@@ -13,6 +14,7 @@ import org.example.exceptions.ExceptionUtil;
 import org.example.validator.ItemValidator;
 import org.example.validator.OrderValidator;
 import org.example.validator.UserValidator;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +27,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api")
@@ -39,6 +42,7 @@ public class ShopUserController {
     private final ItemValidator itemValidator;
     private final ShopRepository shopRepository;
     private final ShopManager shopManager;
+    private final ShopKeeperManager shopKeeperManager;
     ShopUserController(final UserValidator userValidator,
                        final UserManager userManager,
                        final OrderManager orderManager,
@@ -46,7 +50,8 @@ public class ShopUserController {
                        final ItemManager itemManager,
                        final ItemValidator itemValidator,
                        final ShopRepository shopRepository,
-                       final ShopManager shopManager) {
+                       final ShopManager shopManager,
+                       final ShopKeeperManager shopKeeperManager) {
         this.userValidator = userValidator;
         this.userManager = userManager;
         this.orderManager = orderManager;
@@ -55,7 +60,11 @@ public class ShopUserController {
         this.itemValidator = itemValidator;
         this.shopRepository = shopRepository;
         this.shopManager = shopManager;
+        this.shopKeeperManager = shopKeeperManager;
     }
+
+    @Value("${file.upload-dir}")
+    private String uploadDir;
 
     @PostMapping("/signUp")
     public ResponseEntity<WsUser> signUp(@RequestBody final WsUser wsUser){
@@ -67,19 +76,11 @@ public class ShopUserController {
         return ResponseEntity.ok()
                 .header("x-session-id", sessionId)
                 .body(wsUser);
-//        return ResponseEntity.ok(wsUser);
     }
-
-//    @PostMapping("/login")
-//    public ResponseEntity<WsUser> login(final WsUser wsUser){
-//        ShopUser user = userManager.getUserByMobileNumberAndPassword(wsUser.getNumber(), wsUser.getPassword());
-//        //Todo(mushtaqu): Set header with session id and expire it in 10 minutes
-//        return ResponseEntity.ok(wsUser);
-//    }
 
     @PostMapping("/login")
     public ResponseEntity<WsUser> login(@RequestBody WsUser wsUser) {
-        ShopUser user = userManager.getUserByMobileNumberAndPassword(wsUser.getNumber(), wsUser.getPassword());
+        ShopUser user = userManager.getUserByMobileNumberAndPassword(wsUser.getMobileNumber(), wsUser.getPassword());
         if (user == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
@@ -93,7 +94,7 @@ public class ShopUserController {
 
     @PostMapping("/shop_login")
     public ResponseEntity<WsUser> shopLogin(@RequestBody WsUser wsUser) {
-        ShopUser user = userManager.getUserByMobileNumberAndPassword(wsUser.getNumber(), wsUser.getPassword());
+        ShopUser user = userManager.getUserByMobileNumberAndPassword(wsUser.getMobileNumber(), wsUser.getPassword());
         if (user == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
@@ -107,22 +108,9 @@ public class ShopUserController {
 
     @GetMapping("/shop")
     public ResponseEntity<List<WsShop>> getShop(){
-//        orderValidator.validateItems(wsShopOrder);
-//        final List<Item> items = orderManager.shopOrderToItems(shopOrders);
-        // fetch user from session
-//        ShopUser user = SessionManager.validateSession(sessionId);
-//        if (user == null) {
-//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-//        }
-
-//        final WsShopOrder bookedOrder = orderManager.bookOrder(wsShopOrder, user);
-//        final List<WsShopOrder> wsBookedItems = bookedItems.forEach(item -> {
-//            return orderManager.itemToShopOrder(item);
-//        });
 
         final List<WsShop> wsShops = shopManager.toWsShops(shopManager.getAllShops());
         return ResponseEntity.ok(wsShops);
-//        return ResponseEntity.ok(bookedOrder);
     }
 
     @PostMapping("/shop/orderBookingPreview")
@@ -135,7 +123,6 @@ public class ShopUserController {
     @PostMapping("/shop/order")
     public ResponseEntity<WsShopOrder> bookOrder(@RequestHeader("x-session-id") String sessionId, @RequestBody final WsShopOrder wsShopOrder){
         orderValidator.validateItems(wsShopOrder);
-//        final List<Item> items = orderManager.shopOrderToItems(shopOrders);
         // fetch user from session
         ShopUser user = SessionManager.validateSession(sessionId);
         if (user == null) {
@@ -143,9 +130,6 @@ public class ShopUserController {
         }
 
         final WsShopOrder bookedOrder = orderManager.bookOrder(wsShopOrder, user);
-//        final List<WsShopOrder> wsBookedItems = bookedItems.forEach(item -> {
-//            return orderManager.itemToShopOrder(item);
-//        });
         return ResponseEntity.ok(bookedOrder);
     }
 
@@ -164,72 +148,37 @@ public class ShopUserController {
         return ResponseEntity.ok(wsItems);
     }
 
-//    @GetMapping("/shop/items/all")
-//    public ResponseEntity<List<WsItem>> getAllItem() {
-//        final List<Item> items = itemManager.getAllItem();
-//        final List<WsItem> wsItems = itemManager.toWsItems(items);
-//        return ResponseEntity.ok(wsItems);
-//    }
 
-//    @PostMapping("/shop/items/add")
-//    public ResponseEntity<List<WsItem>> addItems(@RequestHeader("X-Session-Id") String sessionId, @RequestBody final List<WsItem> wsItems){
-//
-//        // fetch user from session
-//        ShopUser user = SessionManager.validateSession(sessionId);
-//        if (user == null) {
-//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-//        }
-//
-//        userValidator.validateIsAdmin(user);
-//
-//        final Shop shop = shopRepository.findByOwner_Id(user.getId());
-//
-//        itemValidator.validateItemBelongsToSameShop(wsItems, shop.getId());
-////        ordervalidator.validateItems(item);
-//        return ResponseEntity.ok(itemManager.addItem(wsItems));
-//    }
+    @PostMapping(value = "/shop/owner/items/add", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<List<WsItem>> addItems(
+            @RequestHeader("x-session-id") String sessionId,
+            @RequestPart("item") final WsItem wsItem,
+            @RequestPart(value = "images", required = false) List<MultipartFile> images) throws IOException {
 
-@PostMapping(value = "/shop/owner/items/add", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-public ResponseEntity<List<WsItem>> addItems(
-        @RequestHeader("x-session-id") String sessionId,
-        @RequestPart("item") final WsItem wsItem,
-        @RequestPart(value = "images", required = false) List<MultipartFile> images) throws IOException, InterruptedException {
+//        final Shopkeeper shopkeeper = SessionManager.validateShopKeeperSession(sessionId);
+//        final Shop shop = shopRepository.findByOwner_Id(shopkeeper.getId());
 
-    // Validate session
-//    ShopUser user = SessionManager.validateSession(sessionId);
-//    if (user == null) {
-//        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-//    }
-    ShopUser user = userManager.findById(1L);
+        if (images != null && !images.isEmpty()) {
+            MultipartFile file = images.get(0); // Assuming one image per item for simplicity
 
-    userValidator.validateIsShopOwner(user, wsItem.getShopId());
-
-    final Shop shop = shopRepository.findByOwner_Id(user.getId());
-
-//    itemValidator.validateItemBelongsToSameShop(wsItems, shop.getId());
-
-    // ✅ Handle image saving
-    if (images != null && !images.isEmpty()) {
-        for (int i = 0; i < images.size(); i++) {
-            MultipartFile file = images.get(i);
             if (!file.isEmpty()) {
-                String uploadDir="/Users/mushtaqu/Desktop/DevelopmentPractice/TicTacToe/resources/static/images/";
-//                String uploadDir = "./resources/static/images/";
-                Files.createDirectories(Paths.get(uploadDir));
+                // 2. Create the directory if it doesn't exist
+               final  Path uploadPath = Paths.get(uploadDir);
+//                Files.createDirectories(uploadPath);
 
-                String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
-                Path filePath = Paths.get(uploadDir, fileName);
+                // 3. Create a unique filename to avoid collisions
+                final String uniqueFileName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
+                final Path filePath = uploadPath.resolve(uniqueFileName);
                 Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 
-                // Attach image path to the item (assuming WsItem has setImageUrl)
-                wsItem.setImageUrl(filePath.toString());
-                Thread.sleep(5000); // To ensure unique filenames based on timestamp
+                // 4. IMPORTANT: Save the RELATIVE URL to the database, not the full system path
+                final String imageUrl = "/uploads/images/" + uniqueFileName;
+                wsItem.setImageUrl(imageUrl);
             }
         }
-    }
 
-    return ResponseEntity.ok(itemManager.addItem(List.of(wsItem)));
-}
+        return ResponseEntity.ok(itemManager.addItem(List.of(wsItem)));
+    }
 
     @GetMapping("/shop/session")
     public ResponseEntity<WsShop> getShopBySessionId(@RequestHeader("x-session-id") String sessionId){

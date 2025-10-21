@@ -18,11 +18,11 @@
             (3, 'Aaditya Shop', '789 Pine St, City C', 3);
 
             INSERT INTO item(id, name, description, quantity, price, shop_id, image_url) VALUES
-            (10, 'Item1', 'Cake', 100, 10.5, 1, '/images/cake.jpeg'),
-            (20, 'Item2', 'Description for Item2', 200, 20.0, 1, '/images/Lifebuoy.jpg'),
-            (30, 'Item3', 'Description for Item3', 150, 15.75, 2, '/images/wheel.jpg'),
-            (40, 'Item4', 'Description for Item4', 300, 30.0, 2, '/images/coke.jpg'),
-            (50, 'Item5', 'Description for Item5', 250, 25.5, 3, '/images/handwash.jpg');
+            (10, 'Item1', 'Cake', 100, 10.5, 1, '/uploads/images/cake.jpeg'),
+            (20, 'Item2', 'Description for Item2', 200, 20.0, 1, '/uploads/images/Lifebuoy.jpg'),
+            (30, 'Item3', 'Description for Item3', 150, 15.75, 2, '/uploads/images/wheel.jpg'),
+            (40, 'Item4', 'Description for Item4', 300, 30.0, 2, '/uploads/images/coke.jpg'),
+            (50, 'Item5', 'Description for Item5', 250, 25.5, 3, '/uploads/images/handwash.jpg');
 
         </sql>
     </changeSet>

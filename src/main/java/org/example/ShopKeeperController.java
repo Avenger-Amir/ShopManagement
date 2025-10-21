@@ -26,7 +26,6 @@ public class ShopKeeperController {
     private final AddressManager addressManager;
     private final OrderManager orderManager;
     private final ShopkeeperValidator shopkeeperValidator;
-//    private final SessionManager sessionManager;
 
     ShopKeeperController(final ShopKeeperManager shopKeeperManager,
                          final AddressManager addressManager,
@@ -36,7 +35,6 @@ public class ShopKeeperController {
         this.addressManager = addressManager;
         this.orderManager = orderManager;
         this.shopkeeperValidator = shopkeeperValidator;
-//        this.sessionManager = sessionManager;
     }
 
     @PostMapping("/login")
@@ -67,7 +65,6 @@ public class ShopKeeperController {
 
     @PostMapping("/sign_up")
     public ResponseEntity<WsShopkeeperSignUp> signUp(@RequestBody final WsShopkeeperSignUp wsShopkeeper){
-//        userValidator.validateUser(wsUser);
         if(shopkeeperValidator.isExistingShopkeeperByMobileNumber(wsShopkeeper.getMobileNumber())){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
@@ -92,7 +89,6 @@ public class ShopKeeperController {
         shopkeeper.setEmailId(wsShopkeeper.getEmailId());
         shopkeeper.setPassword(wsShopkeeper.getPassword());
         shopkeeper.setMobileNumber(wsShopkeeper.getMobileNumber());
-//        shopkeeper.getAddresses().add(addressManager.toAddress(wsShopkeeper.getAddress(), AddressableType.SHOPKEEPER));
         return shopkeeper;
     }
 }

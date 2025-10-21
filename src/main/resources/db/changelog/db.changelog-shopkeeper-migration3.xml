@@ -10,10 +10,10 @@
             create table shop_order(
 --                 id BIGINT NOT NULL PRIMARY KEY DEFAULT NEXTVAL('shop_order_id_seq') , Add not null in shop user
                                        id BIGINT AUTO_INCREMENT PRIMARY KEY,
-                                       shop_id BIGINT NOT NULL REFERENCES shop(id),
                                        user_id BIGINT NOT NULL REFERENCES shop_user(id),
-                                       item_pojo TEXT NOT NULL,
-                                       timestamp TIMESTAMP NOT NULL
+                                       instant TIMESTAMP NOT NULL,
+                                       shop_id BIGINT NOT NULL REFERENCES shop(id),
+                                       status TEXT NOT NULL DEFAULT 'PROCESSING'
             );
 
         create table ordered_item

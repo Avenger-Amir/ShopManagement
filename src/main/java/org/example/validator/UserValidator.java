@@ -23,7 +23,7 @@ public class UserValidator {
 
     public void validateUser(final WsUser wsUser) {
         assert wsUser != null;
-        assert wsUser.getNumber() != null;
+        assert wsUser.getMobileNumber() != null;
         assert wsUser.getPassword() != null;
         assert wsUser.getEmailId() != null;
 
@@ -31,19 +31,19 @@ public class UserValidator {
             throw ExceptionUtil.error("Password length should be 8", "400");
         }
 
-        if (wsUser.getNumber().length() != 10) {
+        if (wsUser.getMobileNumber().length() != 10) {
             throw ExceptionUtil.error("Number length should be 10", "400");
         }
 
-        if (!isAllDigit(wsUser.getNumber())){
+        if (!isAllDigit(wsUser.getMobileNumber())){
             throw ExceptionUtil.error("Mobile Number should contain only digits", "400");
         }
     }
 
     public void validateExistingUser(final WsUser wsUser){
-        final ShopUser user = userManager.getUserByMobileNumber(wsUser.getNumber());
+        final ShopUser user = userManager.getUserByMobileNumber(wsUser.getMobileNumber());
         if (user != null){
-            throw ExceptionUtil.error("User with mobile number " + wsUser.getNumber() + " already exists", "400");
+            throw ExceptionUtil.error("User with mobile number " + wsUser.getMobileNumber() + " already exists", "400");
         }
     }
 

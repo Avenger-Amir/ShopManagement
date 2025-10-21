@@ -7,6 +7,7 @@ import org.example.Repository.ShopOrderRepository;
 import org.example.Repository.ShopRepository;
 import org.example.WsModels.WsShopOrder;
 import org.example.WsModels.WsShopOrderList;
+import org.example.enums.ShopOrderStatus;
 import org.springframework.stereotype.Component;
 
 import java.sql.Timestamp;
@@ -37,19 +38,14 @@ public class OrderManager {
     }
 
     synchronized public WsShopOrder bookOrder(final WsShopOrder wsShopOrder, final ShopUser user) {
-//            final List<Item> items = shopOrderToItems(order);
             final Map<Long, Item> itemMap = shopOrderToItemsMap(wsShopOrder);
             final WsShopOrder bookedWsOrder = new WsShopOrder();
             bookedWsOrder.setShopId(wsShopOrder.getShopId());
             AtomicReference<Double> totalPrice= new AtomicReference<>((double) 0);
-//            final List<ItemPojo> itemPojoList = new ArrayList<>();
             final List<OrderedItem> orderedItemList = new ArrayList<>();
-            wsShopOrder.getWsShopOrderList().forEach(order -> {
+        final ShopOrder shopOrder = new ShopOrder();
+        wsShopOrder.getWsShopOrderList().forEach(order -> {
                 final Item item = itemMap.get(order.getItemId());
-
-                //Note(mushtaqu): Skip quantity check
-//                final Long bookedQuantity = Math.min(order.getQuantity(), item.getQuantity());
-//                item.setQuantity(item.getQuantity()-bookedQuantity);
 
                 final WsShopOrderList wsShopOrderList = new WsShopOrderList();
                 wsShopOrderList.setName(item.getName());
@@ -64,31 +60,23 @@ public class OrderManager {
                 orderedItem.setItem(item);
                 orderedItem.setQuantity(order.getQuantity());
                 orderedItem.setPrice(item.getPrice());
-                orderedItemList.add(orderedItem);
-//                final ItemPojo itemPojo = new ItemPojo();
-//                itemPojo.setItemName(item.getName());
-//                itemPojo.setItemQuantity(item.getQuantity());
-//                itemPojo.setItemPrice(item.getPrice());
-//                itemPojoList.add(itemPojo);
+                shopOrder.addOrderedItem(orderedItem);
             });
 
-            final ShopOrder shopOrder = new ShopOrder();
             shopOrder.setShop(shopRepository.getReferenceById(wsShopOrder.getShopId()));
-            shopOrder.setTimestamp(Instant.now());
+            shopOrder.setInstant(Instant.now());
             shopOrder.setUser(user);
-            shopOrder.setOrderedItems(orderedItemList);
+            shopOrder.setStatus(ShopOrderStatus.PENDING);
             shopOrder.setStatus(wsShopOrder.getStatus());
             final ShopOrder savedShopOrder = shopOrderRepository.saveAndFlush(shopOrder);
-            orderedItemList.forEach(orderedItem -> {
-                orderedItem.setShopOrder(savedShopOrder);
-                orderedItemRepository.save(orderedItem);
-            });
 
             final WsShopOrder bookedWsShopOrder = new WsShopOrder();
             bookedWsShopOrder.setShopId(wsShopOrder.getShopId());
             bookedWsShopOrder.setStatus(wsShopOrder.getStatus());
+            bookedWsShopOrder.setOrderId(savedShopOrder.getId());
+            bookedWsShopOrder.setWsShopOrderList(bookedWsOrder.getWsShopOrderList());
 
-            return wsShopOrder;
+            return bookedWsShopOrder;
         }
 
     public WsShopOrder previewShopOrder(final WsShopOrder wsShopOrder){
@@ -118,7 +106,7 @@ public class OrderManager {
     }
 
     public List<WsShopOrderList> getMostSoldItems(final Long shopkeeperId, final Instant startTime, final Instant endTime){
-        final List<ShopOrder> shopOrders = shopOrderRepository.findByShop_IdAndTimestampIsBetween(shopkeeperId, startTime, endTime);
+        final List<ShopOrder> shopOrders = shopOrderRepository.findByShop_IdAndInstantIsBetween(shopkeeperId, startTime, endTime);
         return getCombinedOrdersByItemId(shopOrders);
     }
 
