@@ -46,7 +46,7 @@ public class WebConfig implements WebMvcConfigurer {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/api/**")   // only allow API endpoints
-                        .allowedOrigins("http://localhost:5173", "https://yourdomain.com") // dev + prod frontend
+                        .allowedOriginPatterns("http://localhost:5173", "https://*.ngrok-free.dev") // dev + prod frontend
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*")
                         .exposedHeaders("x-session-id", "Content-Type")

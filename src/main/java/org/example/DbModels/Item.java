@@ -42,4 +42,7 @@ public class Item {
 
     @Column(name="image_url")
     private String imageUrl;
+
+    @Column(name="archived")
+    private boolean archived = false;
 }

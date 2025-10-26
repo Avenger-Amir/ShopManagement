@@ -48,7 +48,8 @@
                 quantity BIGINT NOT NULL,
                 price DOUBLE PRECISION NOT NULL ,
                 shop_id BIGINT NOT NULL REFERENCES shop(id),
-                image_url TEXT NOT NULL
+                image_url TEXT NOT NULL,
+                archived BOOLEAN NOT NULL DEFAULT false
             );
 
             create table address

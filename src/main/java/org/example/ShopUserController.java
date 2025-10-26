@@ -13,6 +13,7 @@ import org.example.WsModels.WsUser;
 import org.example.exceptions.ExceptionUtil;
 import org.example.validator.ItemValidator;
 import org.example.validator.OrderValidator;
+import org.example.validator.ShopkeeperValidator;
 import org.example.validator.UserValidator;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -43,6 +44,8 @@ public class ShopUserController {
     private final ShopRepository shopRepository;
     private final ShopManager shopManager;
     private final ShopKeeperManager shopKeeperManager;
+    private final ShopkeeperValidator shopkeeperValidator;
+
     ShopUserController(final UserValidator userValidator,
                        final UserManager userManager,
                        final OrderManager orderManager,
@@ -51,7 +54,7 @@ public class ShopUserController {
                        final ItemValidator itemValidator,
                        final ShopRepository shopRepository,
                        final ShopManager shopManager,
-                       final ShopKeeperManager shopKeeperManager) {
+                       final ShopKeeperManager shopKeeperManager, ShopkeeperValidator shopkeeperValidator) {
         this.userValidator = userValidator;
         this.userManager = userManager;
         this.orderManager = orderManager;
@@ -61,6 +64,7 @@ public class ShopUserController {
         this.shopRepository = shopRepository;
         this.shopManager = shopManager;
         this.shopKeeperManager = shopKeeperManager;
+        this.shopkeeperValidator = shopkeeperValidator;
     }
 
     @Value("${file.upload-dir}")
@@ -155,8 +159,6 @@ public class ShopUserController {
             @RequestPart("item") final WsItem wsItem,
             @RequestPart(value = "images", required = false) List<MultipartFile> images) throws IOException {
 
-//        final Shopkeeper shopkeeper = SessionManager.validateShopKeeperSession(sessionId);
-//        final Shop shop = shopRepository.findByOwner_Id(shopkeeper.getId());
 
         if (images != null && !images.isEmpty()) {
             MultipartFile file = images.get(0); // Assuming one image per item for simplicity
@@ -199,22 +201,18 @@ public class ShopUserController {
     @DeleteMapping("/shop/items/remove/{itemId}")
     public ResponseEntity<String> removeItems(@RequestHeader("x-session-id") String sessionId, @RequestParam("itemId") final Long itemId){
         // fetch user from session
-        ShopUser user = SessionManager.validateSession(sessionId);
-        if (user == null) {
+        final Shopkeeper shopkeeper = SessionManager.validateShopKeeperSession(sessionId);
+        if (shopkeeper == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         final Item item = itemManager.getItemById(itemId);
         if(item == null){
             throw ExceptionUtil.error("Item with id " + itemId + " does not exist", "204");
         }
-        userValidator.validateIsShopOwner(user, item.getShop().getId());
+        shopkeeperValidator.validateItemOwnership(shopkeeper, item);
 
-//        final Shop shop = shopRepository.findByOwner_Id(user.getId());
-
-
-//        itemValidator.validateItemBelongsToSameShop(wsItems, shop.getId());
-        itemManager.removeItem(itemId);
-        return ResponseEntity.ok(String.format("Item %s removed successfully", item.getName()));
+        itemManager.archiveItem(itemId);
+        return ResponseEntity.ok(String.format("Item %s archived successfully", item.getName()));
     }
 
     @PostMapping("/shop/items/changePrice")

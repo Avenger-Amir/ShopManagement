@@ -121,6 +121,12 @@ public class ItemManager {
         return itemRepository.findByShopId(shopId);
     }
 
+    public void archiveItem(final Long itemId){
+        final Item item = itemRepository.getReferenceById(itemId);
+        item.setArchived(true);
+        itemRepository.saveAndFlush(item);
+    }
+
     public void removeItem(final Long itemId){
         itemRepository.deleteById(itemId);
     }
