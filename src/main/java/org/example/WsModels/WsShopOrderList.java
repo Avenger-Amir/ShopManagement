@@ -9,6 +9,9 @@ import lombok.Setter;
 @Getter
 public class WsShopOrderList {
 
+    @JsonProperty("order_id")
+    private Long orderId;
+
     @JsonProperty("item_id")
     @NonNull private Long itemId;
 

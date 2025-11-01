@@ -106,7 +106,7 @@ public class OrderManager {
     }
 
     public List<WsShopOrderList> getMostSoldItems(final Long shopkeeperId, final Instant startTime, final Instant endTime){
-        final List<ShopOrder> shopOrders = shopOrderRepository.findByShop_IdAndInstantIsBetween(shopkeeperId, startTime, endTime);
+        final List<ShopOrder> shopOrders = shopOrderRepository.findAllByShop_IdAndInstantIsBetween(shopkeeperId, startTime, endTime);
         return getCombinedOrdersByItemId(shopOrders);
     }
 
@@ -128,6 +128,16 @@ public class OrderManager {
             });
         }
         return itemIdToOrderMap.values().stream().toList();
+    }
+
+    public List<WsShopOrderList> getShopOrderByShopId(final Long shopId, final Instant startTime, final Instant endTime){
+        final List<ShopOrder> shopOrders = shopOrderRepository.findAllByShop_IdAndInstantIsBetween(shopId, startTime, endTime);
+        return getCombinedOrdersByItemId(shopOrders);
+    }
+
+    public List<WsShopOrderList> getShopOrderByUserId(final Long userId, final Instant startTime, final Instant endTime){
+        final List<ShopOrder> shopOrders = shopOrderRepository.finalAllByShopUser_IdAndInstantIsBetween(userId, startTime, endTime);
+        return getCombinedOrdersByItemId(shopOrders);
     }
 
 }

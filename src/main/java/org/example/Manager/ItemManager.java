@@ -100,6 +100,10 @@ public class ItemManager {
         return itemRepository.findAll();
     }
 
+    public List<Item> getAllItemByIds(final List<Long> itemIds){
+        return itemRepository.findAllById(itemIds);
+    }
+
     public List<Item> getItemsByNameAndShopId(final String name, final Long shopId){
 //        String SQL_QUERY = ItemRepository.SELECT_ITEM + ItemRepository.WHERE + ItemRepository.By_NAME_SQL;
 //        if(shopId != null){

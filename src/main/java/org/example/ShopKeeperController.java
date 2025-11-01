@@ -1,15 +1,10 @@
 package org.example;
 
-import org.example.DbModels.Address;
-import org.example.DbModels.ShopOrder;
-import org.example.DbModels.Shopkeeper;
-import org.example.DbModels.ShopUser;
-import org.example.Manager.AddressManager;
-import org.example.Manager.OrderManager;
-import org.example.Manager.SessionManager;
-import org.example.Manager.ShopKeeperManager;
+import org.example.DbModels.*;
+import org.example.Manager.*;
 import org.example.WsModels.*;
 import org.example.enums.AddressableType;
+import org.example.validator.ItemValidator;
 import org.example.validator.ShopkeeperValidator;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,15 +21,20 @@ public class ShopKeeperController {
     private final AddressManager addressManager;
     private final OrderManager orderManager;
     private final ShopkeeperValidator shopkeeperValidator;
+    private final ItemManager itemManager;
+    private final ItemValidator itemValidator;
 
     ShopKeeperController(final ShopKeeperManager shopKeeperManager,
                          final AddressManager addressManager,
                          final OrderManager orderManager,
-                         final ShopkeeperValidator shopkeeperValidator){
+                         final ShopkeeperValidator shopkeeperValidator, final ItemManager itemManager,
+                         final ItemValidator itemValidator) {
         this.shopKeeperManager = shopKeeperManager;
         this.addressManager = addressManager;
         this.orderManager = orderManager;
         this.shopkeeperValidator = shopkeeperValidator;
+        this.itemManager = itemManager;
+        this.itemValidator = itemValidator;
     }
 
     @PostMapping("/login")
@@ -81,6 +81,26 @@ public class ShopKeeperController {
                 .header("x-session-id", sessionId)
                 .body(wsShopkeeper);
 //        return ResponseEntity.ok(wsUser);
+    }
+
+    @PostMapping("/shop/items/changePrice")
+    public ResponseEntity<WsItem> changePrice(@RequestHeader("x-session-id") final String sessionId, @RequestBody final WsItem wsItem){
+
+        // fetch user from session
+        final Shopkeeper shopkeeper = SessionManager.validateShopKeeperSession(sessionId);
+        if (shopkeeper == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        final List<Item> items = itemManager.getAllItemByIds(List.of(wsItem.getId()));
+
+        itemValidator.validateAllItemExisting(List.of(wsItem));
+        shopkeeperValidator.validateItemOwnership(shopkeeper, items.get(0));
+
+//        final Shop shop = shopRepository.findByOwner_Id(user.getId());
+//
+//        itemValidator.validateItemBelongsToSameShop(List.of(wsItem), shop.getId());
+        itemManager.updatePrice(wsItem);
+        return ResponseEntity.ok(wsItem);
     }
 
     private Shopkeeper toShopkeeper(final WsShopkeeperSignUp wsShopkeeper){

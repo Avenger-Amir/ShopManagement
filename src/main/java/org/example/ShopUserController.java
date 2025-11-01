@@ -6,10 +6,7 @@ import org.example.DbModels.ShopUser;
 import org.example.DbModels.Shopkeeper;
 import org.example.Manager.*;
 import org.example.Repository.ShopRepository;
-import org.example.WsModels.WsItem;
-import org.example.WsModels.WsShop;
-import org.example.WsModels.WsShopOrder;
-import org.example.WsModels.WsUser;
+import org.example.WsModels.*;
 import org.example.exceptions.ExceptionUtil;
 import org.example.validator.ItemValidator;
 import org.example.validator.OrderValidator;
@@ -215,24 +212,22 @@ public class ShopUserController {
         return ResponseEntity.ok(String.format("Item %s archived successfully", item.getName()));
     }
 
-    @PostMapping("/shop/items/changePrice")
-    public ResponseEntity<WsItem> changePrice(@RequestHeader("x-session-id") final String sessionId, @RequestBody final WsItem wsItem){
-
+    @GetMapping("/shop/order_history")
+    public ResponseEntity<List<WsShopOrderList>> getOrderHistoryByUser(@RequestHeader("x-session-id") final String sessionId, @RequestBody final WsShopOrderHistoryRequest wsShopOrderHistoryRequest){
         // fetch user from session
         final ShopUser user = SessionManager.validateSession(sessionId);
-        if (user == null) {
+        final Shopkeeper shopkeeper = SessionManager.validateShopKeeperSession(sessionId);
+        if (shopkeeper == null && user == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
 
-        userValidator.validateIsShopOwner(user, wsItem.getShopId());
-        itemValidator.validateAllItemExisting(List.of(wsItem));
+        if(shopkeeper!=null){
+            final Shop shop = shopRepository.findByOwner_Id(shopkeeper.getId());
+            return ResponseEntity.ok(orderManager.getShopOrderByShopId(shop.getId(), wsShopOrderHistoryRequest.getStartTimestamp(), wsShopOrderHistoryRequest.getEndTimestamp()));
+        }
 
-        final Shop shop = shopRepository.findByOwner_Id(user.getId());
-
-        itemValidator.validateItemBelongsToSameShop(List.of(wsItem), shop.getId());
-        itemManager.updatePrice(wsItem);
-        return ResponseEntity.ok(wsItem);
+        return ResponseEntity.ok(orderManager.getShopOrderByUserId(user.getId(), wsShopOrderHistoryRequest.getStartTimestamp(), wsShopOrderHistoryRequest.getEndTimestamp()));
     }
 
 }
