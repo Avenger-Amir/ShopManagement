@@ -23,6 +23,10 @@ public class WsShopOrder {
     @JsonProperty("status")
     private ShopOrderStatus status;
 
+    // inside WsShopOrder class
+    @JsonProperty("coupon_code")
+    private String couponCode;
+
     @JsonProperty("shop_order_list")
     private List<WsShopOrderList> wsShopOrderList = new ArrayList<>();
 }

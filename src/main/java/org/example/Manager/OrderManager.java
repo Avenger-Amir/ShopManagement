@@ -1,10 +1,7 @@
 package org.example.Manager;
 
 import org.example.DbModels.*;
-import org.example.Repository.ItemRepository;
-import org.example.Repository.OrderedItemRepository;
-import org.example.Repository.ShopOrderRepository;
-import org.example.Repository.ShopRepository;
+import org.example.Repository.*;
 import org.example.WsModels.WsShopOrder;
 import org.example.WsModels.WsShopOrderList;
 import org.example.enums.ShopOrderStatus;
@@ -26,15 +23,18 @@ public class OrderManager {
     private final ShopRepository shopRepository;
     private final ShopOrderRepository shopOrderRepository;
     private final OrderedItemRepository orderedItemRepository;
+    private final CouponRepository couponRepository;
 
     OrderManager(final ItemRepository itemRepository,
                  final ShopRepository shopRepository,
                  final ShopOrderRepository shopOrderRepository,
-                 final OrderedItemRepository orderedItemRepository) {
+                 final OrderedItemRepository orderedItemRepository,
+                 final CouponRepository couponRepository) {
         this.itemRepository = itemRepository;
         this.shopRepository = shopRepository;
         this.shopOrderRepository = shopOrderRepository;
         this.orderedItemRepository = orderedItemRepository;
+        this.couponRepository = couponRepository;
     }
 
     synchronized public WsShopOrder bookOrder(final WsShopOrder wsShopOrder, final ShopUser user) {
@@ -68,6 +68,30 @@ public class OrderManager {
             shopOrder.setUser(user);
             shopOrder.setStatus(ShopOrderStatus.PENDING);
             shopOrder.setStatus(wsShopOrder.getStatus());
+
+        double subTotal = totalPrice.get();
+        double discount = 0.0;
+        double finalPrice = subTotal;
+
+        if (wsShopOrder.getCouponCode() != null) {
+            Coupon coupon = couponRepository.findByCode(wsShopOrder.getCouponCode());
+
+            // Validate Coupon
+            if (coupon != null && coupon.isActive() &&
+                    coupon.getExpiryDate().isAfter(Instant.now()) &&
+                    subTotal >= coupon.getMinOrderAmount()) {
+
+                double calculatedDiscount = (subTotal * coupon.getDiscountPercentage()) / 100;
+                discount = Math.min(calculatedDiscount, coupon.getMaxDiscountAmount());
+            }
+            finalPrice-= discount;
+        }
+
+//        double finalPrice = subTotal - discount;
+// Save 'discount' and 'finalPrice' to your ShopOrder entity (add these fields to ShopOrder.java first!)
+        shopOrder.setDiscount(discount);
+        shopOrder.setFinalPrice(finalPrice);
+
             final ShopOrder savedShopOrder = shopOrderRepository.saveAndFlush(shopOrder);
 
             final WsShopOrder bookedWsShopOrder = new WsShopOrder();
@@ -136,7 +160,7 @@ public class OrderManager {
     }
 
     public List<WsShopOrderList> getShopOrderByUserId(final Long userId, final Instant startTime, final Instant endTime){
-        final List<ShopOrder> shopOrders = shopOrderRepository.finalAllByShopUser_IdAndInstantIsBetween(userId, startTime, endTime);
+        final List<ShopOrder> shopOrders = shopOrderRepository.findAllByUser_IdAndInstantIsBetween(userId, startTime, endTime);
         return getCombinedOrdersByItemId(shopOrders);
     }
 

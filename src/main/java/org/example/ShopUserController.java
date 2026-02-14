@@ -1,5 +1,6 @@
 package org.example;
 
+import lombok.extern.slf4j.Slf4j;
 import org.example.DbModels.Item;
 import org.example.DbModels.Shop;
 import org.example.DbModels.ShopUser;
@@ -30,6 +31,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api")
 @CrossOrigin
+@Slf4j
 public class ShopUserController {
 
     private final UserValidator userValidator;
@@ -81,12 +83,14 @@ public class ShopUserController {
 
     @PostMapping("/login")
     public ResponseEntity<WsUser> login(@RequestBody WsUser wsUser) {
+//        log.warn("Login attempt for mobile number: {}", wsUser.getMobileNumber());
         ShopUser user = userManager.getUserByMobileNumberAndPassword(wsUser.getMobileNumber(), wsUser.getPassword());
         if (user == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
         String sessionId = SessionManager.createSession(user);
+        log.warn("session id" + sessionId);
 
         return ResponseEntity.ok()
                 .header("x-session-id", sessionId)
@@ -212,7 +216,7 @@ public class ShopUserController {
         return ResponseEntity.ok(String.format("Item %s archived successfully", item.getName()));
     }
 
-    @GetMapping("/shop/order_history")
+    @PostMapping("/shop/order_history")
     public ResponseEntity<List<WsShopOrderList>> getOrderHistoryByUser(@RequestHeader("x-session-id") final String sessionId, @RequestBody final WsShopOrderHistoryRequest wsShopOrderHistoryRequest){
         // fetch user from session
         final ShopUser user = SessionManager.validateSession(sessionId);

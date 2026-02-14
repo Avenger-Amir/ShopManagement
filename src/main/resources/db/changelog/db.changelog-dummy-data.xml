@@ -24,6 +24,9 @@
             (40, 'Item4', 'Description for Item4', 300, 30.0, 2, '/uploads/images/coke.jpg'),
             (50, 'Item5', 'Description for Item5', 250, 25.5, 3, '/uploads/images/handwash.jpg');
 
+            INSERT INTO shop_user (id, email_id, name, mobile_number, password)
+            VALUES (1, 'abc', 'amir', '6202205864', '12345678');
+
         </sql>
     </changeSet>
 </databaseChangeLog>

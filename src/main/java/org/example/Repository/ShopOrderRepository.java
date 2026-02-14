@@ -11,6 +11,5 @@ import java.util.List;
 public interface ShopOrderRepository extends JpaRepository<ShopOrder, Long> {
     List<ShopOrder> findAllByShop_IdAndInstantIsBetween(final Long shopId, Instant timestampAfter, Instant timestampBefore);
 
-    List<ShopOrder> finalAllByShopUser_IdAndInstantIsBetween(final Long userId, final Instant timestampAfter, final Instant timestampBefore);
-    List<ShopOrder> findAllByShop_Shopkeeper_IdAndInstantIsBetween(final Long shopkeeperId, final Instant timestampAfter, final Instant timestampBefore);
+    List<ShopOrder> findAllByUser_IdAndInstantIsBetween(final Long userId, final Instant timestampAfter, final Instant timestampBefore);//    List<ShopOrder> findAllByShop_Shopkeeper_IdAndInstantIsBetween(final Long shopkeeperId, final Instant timestampAfter, final Instant timestampBefore);
 }

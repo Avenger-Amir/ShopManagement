@@ -7,13 +7,29 @@
     <changeSet id="2023-02-08_02-59-11_247156.1" author="mushtaqu">
         <sql>
 
+            create table coupon (
+                                    id BIGSERIAL PRIMARY KEY,
+                                    code TEXT NOT NULL UNIQUE,
+                                    discount_percentage DOUBLE PRECISION NOT NULL DEFAULT 0.0,
+                                    expiry_date TIMESTAMP NOT NULL,
+                                    max_discount_amount DOUBLE PRECISION NOT NULL DEFAULT 0.0,
+                                    min_order_amount DOUBLE PRECISION NOT NULL DEFAULT 0.0,
+                                    shop_id BIGINT NOT NULL REFERENCES shop(id),
+                                    usage_limit BIGINT NOT NULL DEFAULT 1,
+                                    usage_count BIGINT NOT NULL DEFAULT 0,
+                                    is_active BOOLEAN NOT NULL DEFAULT true
+            );
+
             create table shop_order(
 --                 id BIGINT NOT NULL PRIMARY KEY DEFAULT NEXTVAL('shop_order_id_seq') , Add not null in shop user
                                        id BIGINT AUTO_INCREMENT PRIMARY KEY,
                                        user_id BIGINT NOT NULL REFERENCES shop_user(id),
                                        instant TIMESTAMP NOT NULL,
                                        shop_id BIGINT NOT NULL REFERENCES shop(id),
-                                       status TEXT NOT NULL DEFAULT 'PROCESSING'
+                                       status TEXT NOT NULL DEFAULT 'PROCESSING',
+                                    final_price DOUBLE PRECISION NOT NULL,
+                                    coupon_id BIGINT REFERENCES coupon(id),
+                                    discount DOUBLE PRECISION NOT NULL DEFAULT 0.0
             );
 
         create table ordered_item

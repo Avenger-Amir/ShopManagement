@@ -54,6 +54,16 @@ public class ShopOrder {
             targetEntity = OrderedItem.class)
     private List<OrderedItem> orderedItems = new ArrayList<>();
 
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name="coupon_id")
+    private Coupon coupon;
+
+    @Column(name="discount")
+    private Double discount;
+
+    @Column(name="final_price")
+    private Double finalPrice;
+
     // In ShopOrder.java
     public void addOrderedItem(OrderedItem item) {
         orderedItems.add(item);

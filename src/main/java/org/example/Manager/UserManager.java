@@ -23,15 +23,15 @@ public class UserManager {
     }
 
     public ShopUser getUserByMobileNumberAndPassword(final String mobileNumber, final String password){
-        final ShopUser user = userRepository.findByMobileNumber(mobileNumber);
-        if(user == null){
-            throw new BadRequestException("Mobile Number is wrong");
-        }
-
-        if(!user.getPassword().equals(password)){
-            throw new BadRequestException("Password is incorrect");
-        }
-        return user;
+        return userRepository.findByMobileNumber(mobileNumber);
+//        if(user == null){
+//            throw new BadRequestException("Mobile Number is wrong");
+//        }
+//
+//        if(!user.getPassword().equals(password)){
+//            throw new BadRequestException("Password is incorrect");
+//        }
+//        return user;
     }
 
     private ShopUser toUser(final WsUser wsUser) {
